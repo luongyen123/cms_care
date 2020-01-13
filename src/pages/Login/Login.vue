@@ -1,82 +1,50 @@
 <template>
-  <div class="login-container">
-    <form class="el-form login-form el-form--label-left"
-    >
-      <div class="title-container">
-        <h3 class="title">Care Give</h3>
+  <div class="text-center bg-light">
+    <form class="form-signin">
+      <h1 class="h3 mb-3 font-weight-normal">Please Login</h1>
+      <div class="form-group">
+        <label for="inputEmail" class="sr-only">Email address</label>
+        <input
+          type="text"
+          id="inputEmail"
+          class="form-control"
+          placeholder="Email address"
+          required
+          autofocus
+        />
       </div>
-      <div class="el-input el-input--default">
-        <div class="col-sm-10">
-          <input
-            ref="userId"
-            v-model="loginForm.userId"
-            type="text"
-            class="form-control el-input__inner"
-            id="userId"
-            placeholder="Enter User ID"
-            name="userId"
-            autocomplete="off"
-            tabindex="1"
-            required
-          />
-        </div>
+      <div class="form-group">
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input
+          type="password"
+          id="inputPassword"
+          class="form-control"
+          placeholder="Password"
+          required
+        />
       </div>
-      <div class="el-input el-input--default">
-        <div class="col-sm-10">
-          <input
-            v-model="loginForm.password"
-            type="password"
-            class="form-control"
-            id="pwd"
-            placeholder="Enter password"
-            name="password"
-            required
-          />
-        </div>
-      </div>
-      
-      <button
-        v-bind:disabled="loading" 
-        v-on:click="handleLogin"
-        type="primary" 
-        class="btn btn-primary" style="width: 100%; margin-bottom: 30px;"
-      >Submit</button>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
     </form>
   </div>
 </template>
 
 <script>
-import validations from '../../utils/validation'
 export default {
   name: "Login",
   components: {},
   data() {
     return {
+      errors: [],
       loginForm: {
-        userId: "",
-        password: ""
+        userId: null,
+        password: null
       },
       passwordType: "password",
-      capsTooltip: false,
       loading: false,
-      showDialog: false,
       redirect: "/",
       otherQuery: {},
       ...validations
     };
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        const query = route.query;
-        console.log(query)
-        if (query) {
-          this.redirect = query.redirect;
-          this.otherQuery = this.getOtherQuery(query);
-        }
-      },
-      immediate: true
-    }
   },
   created() {
     // window.addEventListener('storage', this.afterQRScan)
@@ -88,12 +56,9 @@ export default {
       this.$refs.password.focus();
     }
   },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
-  },
   methods: {
     handleLogin() {
-      console.log(this.$refs.loginForm)
+      console.log(this.$refs.loginForm);
       this.$refs.userId.validate(valid => {
         if (valid) {
           this.loading = true;
@@ -122,127 +87,77 @@ export default {
         }
         return acc;
       }, {});
+    },
+    checkForm(e) {
+      this.errors = [];
+      if (!this.userId) {
+        this.errors.push(" UserID required");
+      } else if (!this.password) {
+        this.errors.push(" Password required");
+      }
+      if (!this.errors.length) {
+        return true;
+      }
+      e.preventDefault();
     }
   }
 };
 </script>
 
 <style lang="scss">
-$bg: #283443;
-$light_gray: #fff;
-$cursor: #fff;
-
-@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .input {
-    color: $cursor;
-  }
-}
-
-/* reset element-ui css */
-.login-container {
-  .el-input {
-    display: inline-block;
-    height: 47px;
-    width: 85%;
-
-    input {
-      background: transparent;
-      border: 0px;
-      -webkit-appearance: none;
-      border-radius: 0px;
-      padding: 12px 5px 12px 15px;
-      color: $light_gray;
-      height: 47px;
-      caret-color: $cursor;
-
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
-      }
-    }
+  html,
+  body {
+    height: 100%;
   }
 
-  .el-form-item {
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    color: #454545;
+  body {
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-align: center;
+    -ms-flex-pack: center;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #f5f5f5;
   }
-}
-</style>
 
-<style lang="scss" scoped>
-$bg: #2d3a4b;
-$dark_gray: #889aa4;
-$light_gray: #eee;
-
-.login-container {
-  min-height: 100%;
-  width: 100%;
-  background-color: $bg;
-  overflow: hidden;
-
-  .login-form {
-    position: relative;
-    width: 520px;
+  .form-signin {
+    min-width: 400px;
     max-width: 100%;
-    padding: 160px 35px 0;
+    padding: 15px;
     margin: 0 auto;
-    overflow: hidden;
-  }
-
-  .tips {
-    font-size: 14px;
-    color: #fff;
-    margin-bottom: 10px;
-
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
+    input {
+      border: 1px solid #ced4da;
+      border-radius: 0.25rem !important;
+      background: #fff;
     }
   }
 
-  .svg-container {
-    padding: 6px 5px 6px 15px;
-    color: $dark_gray;
-    vertical-align: middle;
-    width: 30px;
-    display: inline-block;
+  .form-signin .checkbox {
+    font-weight: 400;
   }
-
-  .title-container {
+  .form-signin .form-control {
     position: relative;
-
-    .title {
-      font-size: 26px;
-      color: $light_gray;
-      margin: 0px auto 40px auto;
-      text-align: center;
-      font-weight: bold;
-    }
-  }
-
-  .show-pwd {
-    position: absolute;
-    right: 10px;
-    top: 7px;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
     font-size: 16px;
-    color: $dark_gray;
-    cursor: pointer;
-    user-select: none;
   }
-
-  .thirdparty-button {
-    position: absolute;
-    right: 0;
-    bottom: 6px;
+  .form-signin .form-control:focus {
+    z-index: 2;
   }
-
-  @media only screen and (max-width: 470px) {
-    .thirdparty-button {
-      display: none;
-    }
+  .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
   }
-}
+  .form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
 </style>
