@@ -11,8 +11,7 @@
             <label for="end_date">End date:</label>
             <input type="date" class="form-control" id="end_date" />
           </div>
-          <div class="form-group">
-          </div>
+          <list-location :data="dataLocation" :nameList="locationColums.nameList" :code="locationColums.code" :show_name="locationColums.show_name"/>
           <button type="submit" class="btn btn-default">Search</button>
         </div>
         <input
@@ -36,6 +35,12 @@
 </template>
 <script>
 import { PaperTable } from "@/components";
+import ListLocation from '@/components/ListLocation.vue'
+const locationColums = {
+  nameList: "city_code",
+  code: "code",
+  show_name: "show_name"
+}
 const tableColumns = [
   "Name",
   "City",
@@ -56,7 +61,8 @@ const columnIndxs = [
 ];
 export default {
   components: {
-    PaperTable
+    PaperTable,
+    ListLocation
   },
   data() {
     return {
@@ -74,11 +80,17 @@ export default {
         end_date: 0,
         city_code: "",
         district_code: ""
-      }
+      },
+      locationGet: {
+        key:""
+      },
+      locationColums,
+      dataLocation: []
     };
   },
   created() {
     this.fetch();
+    this.fetch_locaion()
   },
   methods: {
     async fetch(page) {
@@ -89,6 +101,11 @@ export default {
       this.$store.dispatch("patient/home", this.formData).then(reponse => {
         this.data = reponse.datas;
         this.formData.totalPage = reponse.total_page;
+      });
+    },
+    async fetch_locaion() {
+      this.$store.dispatch("location/listCity", this.locationGet).then(reponse => {
+        this.dataLocation = reponse;
       });
     }
   },
