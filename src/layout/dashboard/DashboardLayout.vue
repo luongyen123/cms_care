@@ -3,9 +3,9 @@
     <side-bar>
       <template slot="links">
         <sidebar-link to="/dashboard" name="Dashboard" icon="ti-panel"/>
+        <sidebar-link to="/list/Patient" name="List Patient" icon="ti-view-list-alt"/>
+        <sidebar-link to="/list/Nurse" name="List Nurse" icon="ti-view-list-alt"/>
         <sidebar-link to="/stats" name="User Profile" icon="ti-user"/>
-        <sidebar-link to="/table-list" name="Table List" icon="ti-view-list-alt"/>
-        <sidebar-link to="/notifications" name="Notifications" icon="ti-bell"/>
       </template>
       <mobile-menu>
         <li class="nav-item">
@@ -15,7 +15,7 @@
           </a>
         </li>
         <drop-down class="nav-item"
-                   title="5 Notifications"
+                   v-bind:title="name"
                    title-classes="nav-link"
                    icon="ti-bell">
           <a class="dropdown-item">Notification 1</a>
@@ -59,22 +59,20 @@ export default {
     DashboardContent,
     MobileMenu
   },
+  data() {
+    return {
+      avatar: "",
+      name:""
+    }
+  },
+  created() {
+  },
   methods: {
     toggleSidebar() {
       if (this.$sidebar.showSidebar) {
         this.$sidebar.displaySidebar(false);
       }
     },
-    pemision() {
-      const hasToken = getToken()
-      const hasRole = getRole()
-      console.log(hasToken)
-      if (hasToken && hasRole){
-        if (hasRole === 1){
-          return true
-        }
-      }
-    }
   }
 };
 </script>

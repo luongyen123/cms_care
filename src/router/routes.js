@@ -6,7 +6,8 @@ import NotFound from "@/pages/NotFoundPage.vue";
 import Dashboard from "@/pages/Dashboard.vue";
 import UserProfile from "@/pages/UserProfile.vue";
 import Login from "@/pages/Login/Login.vue";
-
+import TableList from "@/pages/TableList"
+import NurseList from "@/pages/NurseList"
 const routes = [
   {
     path: "/",
@@ -23,6 +24,18 @@ const routes = [
         path: "stats",
         name: "stats",
         component: UserProfile,
+        meta: {permisions: 1}
+      },
+      {
+        path: "list/Patient",
+        name: "list-user",
+        component: TableList,
+        meta: {permisions: 1}
+      },
+      {
+        path: "list/Nurse",
+        name: "list-user",
+        component: NurseList,
         meta: {permisions: 1}
       }
     ]

@@ -13,20 +13,17 @@ const router = new VueRouter({
 });
 router.beforeEach(async(to, from, next) => {
   const hasToken = getToken()
-  if(hasToken) {
+  const hasRoles = getRole()
+  if(hasToken && hasRoles) {
+    if (to.matched.some((record) => record.meta.permisions) == hasRoles){
       if(to.path === '/login') {
-          next({path: '/dashboard'})
-      }else{
-          const hasRoles = getRole()
-          if (hasRoles){
-              if (to.matched.some((record) => record.meta.permisions) == hasRoles){
-                  next()
-              } else{
-                  Message.error('Permision denined' || 'Has Error')
-                  next(`/login`)
-              }
-          }
+        next({path: '/dashboard'})
+      }else {
+        next()
       }
+    } else {
+      next(`/login`)
+    }
   } else {
       if (whiteList.indexOf(to.path) !== -1) {
           // in the free login whitelist, go directly

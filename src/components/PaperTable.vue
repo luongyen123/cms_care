@@ -8,10 +8,8 @@
     <tbody>
     <tr v-for="(item, index) in data" :key="index">
       <slot :row="item">
-        <td v-for="(column, index) in columns"
-            :key="index"
-            v-if="hasValue(item, column)">
-          {{itemValue(item, column)}}
+        <td v-for="(columnIndx, index) in columnIndxs"
+            :key="index">{{itemValue(item,columnIndx)}}
         </td>
       </slot>
     </tr>
@@ -19,9 +17,11 @@
   </table>
 </template>
 <script>
+import {Age, formatDate} from '../utils/dateFormat'
 export default {
   name: 'paper-table',
   props: {
+    columnIndxs: Array,
     columns: Array,
     data: Array,
     type: {
@@ -47,7 +47,24 @@ export default {
       return item[column.toLowerCase()] !== "undefined";
     },
     itemValue(item, column) {
-      return item[column.toLowerCase()];
+      switch (column) {
+        case "city":
+        case "district":
+          return item[column]["show_name"];
+        case "birthday":
+          return Age(item[column])
+        case "start_date":
+        case "end_date":
+          return formatDate(item[column])
+        case "rate":
+          if(item[column] === 0){
+            return "No Rate"
+          } else {
+            return item[column]+'/5'
+          }
+        default:
+          return item[column];
+      }
     }
   }
 };
