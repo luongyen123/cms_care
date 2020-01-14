@@ -4,7 +4,7 @@
       <template slot="links">
         <sidebar-link to="/dashboard" name="Dashboard" icon="ti-panel"/>
         <sidebar-link to="/list/Patient" name="List Patient" icon="ti-view-list-alt"/>
-        <sidebar-link to="/list/Nurse" name="List Nurse" icon="ti-view-list-alt"/>
+        <sidebar-link to="/list/Nurse" name="List Nurse" icon="ti-direction"/>
         <sidebar-link to="/stats" name="User Profile" icon="ti-user"/>
       </template>
       <mobile-menu>
