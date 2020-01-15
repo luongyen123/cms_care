@@ -34,7 +34,7 @@ const routes = [
       },
       {
         path: "list/Nurse",
-        name: "list-user",
+        name: "list-nurse",
         component: NurseList,
         meta: {permisions: 1}
       }

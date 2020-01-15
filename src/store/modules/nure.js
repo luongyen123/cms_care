@@ -11,7 +11,8 @@ const actions = {
     //user login
     home({commit},formData) {
         let { start_date, end_date, city_code, district_code,next_page } = formData
-        let district_code_sub = district_code.substr(0,1)
+        let district_code_sub = district_code.substr(0,2)
+        console.log(district_code_sub)
         if(district_code_sub != city_code) {
             district_code = ""
         }

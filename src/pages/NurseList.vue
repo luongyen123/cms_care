@@ -3,7 +3,7 @@
     <div class="col-12">
       <card :title="table1.title" :subTitle="table1.subTitle">
         <div class="form-inline">
-          <label for="inline-form-input-start">Start date</label>
+          <!-- <label for="inline-form-input-start">Start date</label> -->
           <b-input
             id="inline-form-input-start"
             placeholder="Start date"
@@ -23,7 +23,7 @@
               v-for="(item, index) in dataLocation"
               :key="index"
               v-bind:value="item['code']"
-            >{{item['show_name']}}({{item['original_name']}})</option>
+            >{{item['show_name']}}</option>
           </b-select>
           <b-select v-model="formData.district_code">
             <option value="" selected>- Please select district --</option>
@@ -31,11 +31,11 @@
               v-for="(item, index) in dataDistrict"
               :key="index"
               v-bind:value="item['code']"
-            >{{item['show_name']}}({{item['original_name']}})</option>
+            >{{item['show_name']}}</option>
           </b-select>
-          <b-button variant="primary" v-on:click="fetch(1)">Search</b-button>
+          <b-button variant="primary" v-on:click="fetch(1)" class="ti-search" />
         </div>
-        <div class="col-md-4 pull-right" style="margin-top:20px">
+        <div class="col-md-4 pull-right" style="margin-top:20px" v-if="totalPage >1">
           <input
             v-for="(item, index) in totalPage"
             v-bind:key="index"
@@ -91,7 +91,7 @@ export default {
     return {
       table1: {
         title: "List Nurse app",
-        subTitle: "",
+        subTitle: "Start date ",
         columns: [...tableColumns],
         columnIndxs: [...columnIndxs]
       },

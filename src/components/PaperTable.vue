@@ -10,7 +10,7 @@
         <slot :row="item">
           <td v-for="(columnIndx, index) in columnIndxs" :key="index">{{itemValue(item,columnIndx)}}</td>
           <td>
-            <b-button v-b-modal.modal-1 v-on:click="viewProfile(item['id'])" class="btn btn-primary">View profile</b-button>
+            <b-button v-b-modal.modal-1 v-on:click="viewProfile(item['id'])" class="btn ti-eye"></b-button>
           </td>
         </slot>
       </tr>
