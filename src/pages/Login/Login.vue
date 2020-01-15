@@ -70,7 +70,7 @@ export default {
           this.$store
             .dispatch("user/login", this.loginForm)
             .then(() => {
-              this.$router.push("/dashboard")
+              this.$router.push("dashboard")
             }).catch((error) =>{
               console.log(error)
             })

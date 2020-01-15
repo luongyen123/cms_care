@@ -16,5 +16,8 @@ export function formatDate(date) {
     if (day.length < 2)
         day = '0' + day;
     return [day, month, year].join('-');
-
+}
+export function formatSearch(dateString) {
+    let d = new Date(dateString);
+    return d.getTime()/CONVERT_DATE
 }

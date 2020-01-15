@@ -1,9 +1,8 @@
 import request from '../service/api'
 
-export function home(data) {
-    console.log(data)
+export function listDistrict(data) {
     return request({
-        url: 'admin/getPatients',
+        url: 'location/getDistrict',
         method: 'post',
         data
     })

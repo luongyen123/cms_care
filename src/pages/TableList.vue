@@ -2,31 +2,57 @@
   <div class="row">
     <div class="col-12">
       <card :title="table1.title" :subTitle="table1.subTitle">
-        <div class="form-group form-inline">
-          <div class="form-group">
-            <label for="start_date">Start date:</label>
-            <input type="date" class="form-control" id="start_date" />
-          </div>
-          <div class="form-group">
-            <label for="end_date">End date:</label>
-            <input type="date" class="form-control" id="end_date" />
-          </div>
-          <list-location :data="dataLocation" :nameList="locationColums.nameList" :code="locationColums.code" :show_name="locationColums.show_name"/>
-          <button type="submit" class="btn btn-default">Search</button>
+        <div class="form-inline">
+          <label for="inline-form-input-start">Start date</label>
+          <b-input
+            id="inline-form-input-start"
+            placeholder="Start date"
+            type="date"
+            v-model="formData.start_date"
+          ></b-input>
+          <!-- <label for="inline-form-input-end">End date</label> -->
+          <b-input
+            id="inline-form-input-end"
+            placeholder="End date"
+            type="date"
+            v-model="formData.end_date"
+          ></b-input>
+          <b-select v-model="formData.city_code" v-on:change="getDistrict">
+            <option value="" >- Please select city --</option>
+            <option
+              v-for="(item, index) in dataLocation"
+              :key="index"
+              v-bind:value="item['code']"
+            >{{item['show_name']}}({{item['original_name']}})</option>
+          </b-select>
+          <b-select v-model="formData.district_code">
+            <option value ="">- Please select district --</option>
+            <option
+              v-for="(item, index) in dataDistrict"
+              :key="index"
+              v-bind:value="item['code']"
+            >{{item['show_name']}}({{item['original_name']}})</option>
+          </b-select>
+          <b-button variant="primary" v-on:click="fetch(1)">Search</b-button>
         </div>
-        <input
-              v-for="(item, index) in formData.totalPage"
-              v-bind:key="index"
-              v-on:click="fetch(item)"
-              v-bind:value="item"
-              name="page"
-              type="button"
-            />
+        <div class="col-md-4 pull-right" style="margin-top:20px">
+          <input
+            v-for="(item, index) in totalPage"
+            v-bind:key="index"
+            v-on:click="fetch(item)"
+            v-bind:value="item"
+            name="page"
+            type="button"
+            class="btn btn-sm btn-primary active"
+            v-bind:disabled="item === pageActive"
+          />
+        </div>
         <div slot="raw-content" class="table-responsive">
           <paper-table
             :data="this.data"
             :columns="table1.columns"
             :columnIndxs="table1.columnIndxs"
+            :typeUser="0"
           ></paper-table>
         </div>
       </card>
@@ -35,12 +61,11 @@
 </template>
 <script>
 import { PaperTable } from "@/components";
-import ListLocation from '@/components/ListLocation.vue'
 const locationColums = {
   nameList: "city_code",
   code: "code",
   show_name: "show_name"
-}
+};
 const tableColumns = [
   "Name",
   "City",
@@ -48,7 +73,8 @@ const tableColumns = [
   "Age",
   "Number interest",
   "Start date",
-  "End Date"
+  "End Date",
+  "Action"
 ];
 const columnIndxs = [
   "name",
@@ -61,8 +87,7 @@ const columnIndxs = [
 ];
 export default {
   components: {
-    PaperTable,
-    ListLocation
+    PaperTable
   },
   data() {
     return {
@@ -73,44 +98,78 @@ export default {
         columnIndxs: [...columnIndxs]
       },
       data: [],
-      pageActive: 0,
+      pageActive: 1,
+      totalPage: 0,
       formData: {
-        totalPage: 0,
+        next_page: 1,
         start_date: 0,
         end_date: 0,
         city_code: "",
         district_code: ""
       },
       locationGet: {
-        key:""
+        key: ""
+      },
+      districtGet: {
+        city_code: "",
+        key: ""
       },
       locationColums,
-      dataLocation: []
+      dataLocation: [],
+      dataDistrict: []
     };
   },
   created() {
-    this.fetch();
-    this.fetch_locaion()
+    this.fetch(1);
+    this.fetch_locaion();
   },
   methods: {
     async fetch(page) {
       if (page) {
         this.formData.next_page = page;
       }
-      this.pageActive = page;
       this.$store.dispatch("patient/home", this.formData).then(reponse => {
         this.data = reponse.datas;
-        this.formData.totalPage = reponse.total_page;
+        console.log()
+        this.totalPage = reponse.total_page;
+        this.pageActive = page === 1 ? 1 : page;
       });
     },
     async fetch_locaion() {
-      this.$store.dispatch("location/listCity", this.locationGet).then(reponse => {
-        this.dataLocation = reponse;
-      });
+      this.$store
+        .dispatch("location/listCity", this.locationGet)
+        .then(reponse => {
+          this.dataLocation = reponse;
+        });
+    },
+    getDistrict(e) {
+      if (e) {
+        this.districtGet = {
+          city_code: e,
+          key: ""
+        };
+        this.$store
+          .dispatch("district/listDistrict", this.districtGet)
+          .then(reponse => {
+            this.dataDistrict = reponse;
+          });
+      }
     }
   },
   computed: {}
 };
 </script>
 <style>
+.form-inline .form-control {
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  display: inline-block;
+  width: auto;
+  vertical-align: middle;
+  font-size: 1rem;
+}
+.card label {
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
 </style>

@@ -20,11 +20,22 @@
   </div>
 </template>
 <script>
+import {getCurrentUser} from '../../utils/auth'
 export default {
   name: "card",
   props: {
     title: String,
     subTitle: String
+  },
+  data() {
+    return {
+      user:{
+          id: 0,
+          name: "",
+          user_name: "",
+          avatar: ""
+      }
+    }
   }
 };
 </script>
