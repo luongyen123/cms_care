@@ -7,7 +7,7 @@ import Dashboard from "@/pages/Dashboard.vue";
 import UserProfile from "@/pages/UserProfile.vue";
 import Login from "@/pages/Login/Login.vue";
 import TableList from "@/pages/TableList"
-import NurseList from "@/pages/NurseList"
+import Requested from "@/pages/Requested"
 const routes = [
   {
     path: "/",
@@ -27,15 +27,15 @@ const routes = [
         meta: {permisions: 1}
       },
       {
-        path: "list/Patient",
-        name: "list-user",
+        path: "listObject",
+        name: "List Object manager",
         component: TableList,
         meta: {permisions: 1}
       },
       {
-        path: "list/Nurse",
-        name: "list-nurse",
-        component: NurseList,
+        path: "listRequested",
+        name: "List requested manager",
+        component: Requested,
         meta: {permisions: 1}
       }
     ]

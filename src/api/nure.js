@@ -7,3 +7,10 @@ export function home(data) {
         data
     })
 }
+export function detail(data) {
+    return request({
+        url: 'nurse/detail',
+        method: 'post',
+        data
+    })
+}

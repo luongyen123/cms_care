@@ -20,14 +20,10 @@
             </a>
           </li>
           <drop-down class="nav-item"
-                     title="5 Notifications"
-                     title-classes="nav-link"
-                     icon="ti-bell">
-            <a class="dropdown-item" href="#">Notification 1</a>
-            <a class="dropdown-item" href="#">Notification 2</a>
-            <a class="dropdown-item" href="#">Notification 3</a>
-            <a class="dropdown-item" href="#">Notification 4</a>
-            <a class="dropdown-item" href="#">Another notification</a>
+                     title="Profile"
+                     title-classes="nav-link">
+            <a class="dropdown-item" href="stats">Notification 1</a>
+            <a class="dropdown-item" href="#">Logout</a>
           </drop-down>
           <li class="nav-item">
             <a href="#" class="nav-link">
@@ -42,6 +38,7 @@
     </div></nav>
 </template>
 <script>
+import {getCurrentUser} from '../../utils/auth'
 export default {
   computed: {
     routeName() {

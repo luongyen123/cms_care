@@ -3,8 +3,8 @@
     <side-bar>
       <template slot="links">
         <sidebar-link to="/dashboard" name="Dashboard" icon="ti-panel"/>
-        <sidebar-link to="/list/Patient" name="List Patient" icon="ti-view-list-alt"/>
-        <sidebar-link to="/list/Nurse" name="List Nurse" icon="ti-direction"/>
+        <sidebar-link to="/listObject" name="List Object" icon="ti-view-list-alt"/>
+        <sidebar-link to="/listRequested" name="List Request" icon="ti-view-list-alt"/>
         <sidebar-link to="/stats" name="User Profile" icon="ti-user"/>
       </template>
       <mobile-menu>
@@ -15,7 +15,7 @@
           </a>
         </li>
         <drop-down class="nav-item"
-                   v-bind:title="name"
+                   title="Profile"
                    title-classes="nav-link"
                    icon="ti-bell">
           <a class="dropdown-item">Notification 1</a>

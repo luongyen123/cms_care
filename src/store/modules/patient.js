@@ -1,4 +1,4 @@
-import {home} from '../../api/patient'
+import {home, detail} from '../../api/patient'
 import {formatSearch} from '../../utils/dateFormat'
 
 const state = {
@@ -17,6 +17,17 @@ const actions = {
         }
         return new Promise((resolve, reject) => {
             home({page: next_page, start_date: formatSearch(start_date), end_date: formatSearch(end_date), city_code: city_code, district_code: district_code}).then(reponse => {
+                const { data }= reponse
+                resolve(data)
+            }).catch( error => {
+                reject(error)
+            })
+        })
+    },
+    detail({commit},formData) {
+        let { id } = formData
+        return new Promise((resolve, reject) => {
+            detail({id: id}).then(reponse => {
                 const { data }= reponse
                 resolve(data)
             }).catch( error => {

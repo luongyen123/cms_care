@@ -75,7 +75,6 @@ export default {
               console.log(error)
             })
       }
-     
     },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {

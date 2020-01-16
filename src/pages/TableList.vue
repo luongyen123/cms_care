@@ -1,10 +1,28 @@
 <template>
   <div class="row">
     <div class="col-12">
-      <button>Patient</button>
-      <button>Nurse</button>
+      <div>
+        <b-button
+          variant="danger"
+          class="tab"
+          v-bind:disabled="tabActive === 1"
+          v-on:click="ActiveTab(1)"
+        >List Patient</b-button>
+        <b-button
+          variant="info"
+          class="tab"
+          v-bind:disabled="tabActive === 2"
+          v-on:click="ActiveTab(2)"
+        >List Nurse</b-button>
+        <b-button
+          variant="success"
+          class="tab"
+          v-bind:disabled="tabActive === 3"
+          v-on:click="ActiveTab(3)"
+        >List Account</b-button>
+      </div>
       <card :title="table1.title" :subTitle="table1.subTitle">
-        <div class="form-inline">
+        <div class="form-inline" v-if="tabActive !== 3">
           <!-- <label for="inline-form-input-start">Start date</label> -->
           <b-input
             id="inline-form-input-start"
@@ -20,7 +38,7 @@
             v-model="formData.end_date"
           ></b-input>
           <b-select v-model="formData.city_code" v-on:change="getDistrict">
-            <option value="" >- Please select city --</option>
+            <option value>- Please select city --</option>
             <option
               v-for="(item, index) in dataLocation"
               :key="index"
@@ -28,7 +46,7 @@
             >{{item['show_name']}}</option>
           </b-select>
           <b-select v-model="formData.district_code">
-            <option value ="">- Please select district --</option>
+            <option value>- Please select district --</option>
             <option
               v-for="(item, index) in dataDistrict"
               :key="index"
@@ -47,6 +65,7 @@
             type="button"
             class="btn btn-sm btn-primary active"
             v-bind:disabled="item === pageActive"
+            style="margin-right: 5px"
           />
         </div>
         <div slot="raw-content" class="table-responsive">
@@ -54,7 +73,7 @@
             :data="this.data"
             :columns="table1.columns"
             :columnIndxs="table1.columnIndxs"
-            :typeUser="0"
+            :typeUser="tabActive"
           ></paper-table>
         </div>
       </card>
@@ -63,11 +82,6 @@
 </template>
 <script>
 import { PaperTable } from "@/components";
-const locationColums = {
-  nameList: "city_code",
-  code: "code",
-  show_name: "show_name"
-};
 const tableColumns = [
   "Name",
   "City",
@@ -87,6 +101,45 @@ const columnIndxs = [
   "start_date",
   "end_date"
 ];
+const tableNurseColumns = [
+  "Name",
+  "City",
+  "District",
+  "Age",
+  "Number interest",
+  "Rate",
+  "Start date care",
+  "End date care",
+  "Action"
+];
+const columnNurseIndxs = [
+  "name",
+  "city",
+  "district",
+  "birthday",
+  "number_like",
+  "rate",
+  "start_date",
+  "end_date"
+];
+const tableAccountColums = [
+  "User ID",
+  "Name",
+  "Email",
+  "Phone",
+  "Type",
+  "Type Account",
+  "Birthday"
+];
+const AcountColumIndexs = [
+  "user_id",
+  "name",
+  "email",
+  "phone",
+  "type",
+  "type_account",
+  "birthday"
+];
 export default {
   components: {
     PaperTable
@@ -99,7 +152,9 @@ export default {
         columns: [...tableColumns],
         columnIndxs: [...columnIndxs]
       },
+      name_router: "patient/home",
       data: [],
+      tabActive: 1,
       pageActive: 1,
       totalPage: 0,
       formData: {
@@ -116,7 +171,6 @@ export default {
         city_code: "",
         key: ""
       },
-      locationColums,
       dataLocation: [],
       dataDistrict: []
     };
@@ -130,9 +184,8 @@ export default {
       if (page) {
         this.formData.next_page = page;
       }
-      this.$store.dispatch("patient/home", this.formData).then(reponse => {
+      this.$store.dispatch(this.name_router, this.formData).then(reponse => {
         this.data = reponse.datas;
-        console.log()
         this.totalPage = reponse.total_page;
         this.pageActive = page === 1 ? 1 : page;
       });
@@ -156,6 +209,42 @@ export default {
             this.dataDistrict = reponse;
           });
       }
+    },
+    ActiveTab(tab) {
+      this.tabActive = tab;
+      this.formData = {
+        next_page: 1,
+        start_date: 0,
+        end_date: 0,
+        city_code: "",
+        district_code: ""
+      };
+      if (this.tabActive === 1) {
+        this.table1 = {
+          title: "List patient app",
+          subTitle: "",
+          columns: [...tableColumns],
+          columnIndxs: [...columnIndxs]
+        };
+        this.name_router = "patient/home";
+      } else if (this.tabActive === 2) {
+        this.table1 = {
+          title: "List Nurse app",
+          subTitle: "",
+          columns: [...tableNurseColumns],
+          columnIndxs: [...columnNurseIndxs]
+        };
+        this.name_router = "nure/home";
+      } else {
+        this.table1 = {
+          title: "List Account Manager",
+          subTitle: "",
+          columns: [...tableAccountColums],
+          columnIndxs: [...AcountColumIndexs]
+        };
+        this.name_router = "user/getList";
+      }
+      this.fetch(1);
     }
   },
   computed: {}
@@ -173,5 +262,8 @@ export default {
 .card label {
   font-size: 1rem;
   margin-bottom: 5px;
+}
+.tab {
+  margin-right: 10px;
 }
 </style>

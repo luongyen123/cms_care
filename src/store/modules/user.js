@@ -1,4 +1,4 @@
-import {login} from '../../api/user'
+import {login, getList, getLogs, getRequest} from '../../api/user'
 import router from '../../router'
 import { getToken, getRole, setToken, setRole, setCurrentUser } from '../../utils/auth'
 
@@ -34,6 +34,39 @@ const actions = {
                 commit('SET_USER', data.user)
                 commit('SET_ROLE', data.user.role)
                 resolve()
+            }).catch( error => {
+                reject(error)
+            })
+        })
+    },
+    getList({commit}, formData) {
+        const {next_page} = formData
+        return new Promise((resolve, reject) => {
+            getList({page: next_page}).then(reponse => {
+                const { data }= reponse
+                resolve(data)
+            }).catch( error => {
+                reject(error)
+            })
+        })
+    },
+    getLogs({commit}, formData) {
+        const {page, id} = formData
+        return new Promise((resolve, reject) => {
+            getLogs({page: page, user_login: id}).then(reponse => {
+                const { data }= reponse
+                resolve(data)
+            }).catch( error => {
+                reject(error)
+            })
+        })
+    },
+    getRequest({}, formData) {
+        const {page, status, start_date, end_date} = formData
+        return new Promise((resolve, reject) => {
+            getRequest({page: page, status: status, start_date: start_date, end_date: end_date}).then(reponse => {
+                const { data }= reponse
+                resolve(data)
             }).catch( error => {
                 reject(error)
             })
