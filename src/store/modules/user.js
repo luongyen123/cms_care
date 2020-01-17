@@ -1,6 +1,6 @@
-import {login, getList, getLogs, getRequest} from '../../api/user'
+import {login, getList, getLogs, getRequest, logout} from '../../api/user'
 import router from '../../router'
-import { getToken, getRole, setToken, setRole, setCurrentUser } from '../../utils/auth'
+import { getToken, getRole, setToken, setRole, setCurrentUser, removeRole, removeToken, removeCurrentUser } from '../../utils/auth'
 
 const state = {
     token: getToken(),
@@ -67,6 +67,19 @@ const actions = {
             getRequest({page: page, status: status, start_date: start_date, end_date: end_date}).then(reponse => {
                 const { data }= reponse
                 resolve(data)
+            }).catch( error => {
+                reject(error)
+            })
+        })
+    },
+    logout({}) {
+        return new Promise((resolve, reject) => {
+            logout().then(reponse => {
+                const { data }= reponse
+                removeRole()
+                removeToken()
+                removeCurrentUser()
+                resolve()
             }).catch( error => {
                 reject(error)
             })

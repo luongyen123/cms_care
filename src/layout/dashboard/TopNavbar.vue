@@ -23,7 +23,7 @@
                      title="Profile"
                      title-classes="nav-link">
             <a class="dropdown-item" href="stats">Notification 1</a>
-            <a class="dropdown-item" href="#">Logout</a>
+            <a class="dropdown-item" v-on:click="logout">Logout</a>
           </drop-down>
           <li class="nav-item">
             <a href="#" class="nav-link">
@@ -66,6 +66,11 @@ export default {
     },
     hideSidebar() {
       this.$sidebar.displaySidebar(false);
+    },
+    logout() {
+      this.$store.dispatch("user/logout").then((response) => {
+        this.$router.push("login")
+      })
     }
   }
 };
