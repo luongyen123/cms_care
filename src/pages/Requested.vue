@@ -53,10 +53,16 @@
                 v-for="(columnIndx, index) in columsIndxs"
                 :key="index"
               >{{itemValue(item,columnIndx)}}</td>
+              <td>
+                <button class="btn ti-layout-tab-window" v-b-modal.modal-1 v-on:click="detailRequest(item.id_request)"></button>
+              </td>
             </slot>
           </tr>
         </tbody>
       </table>
+      <b-modal id="modal-1" title="BootstrapVue">
+        <p class="my-4">Hello from modal!</p>
+      </b-modal>
     </div>
   </div>
 </template>
@@ -69,7 +75,8 @@ const columns = [
   "User Login",
   "Type",
   "Status",
-  "Time"
+  "Time",
+  "Action"
 ];
 const columsIndxs = [
   "nurse",
@@ -91,6 +98,12 @@ export default {
         status: -1,
         start_date: "",
         end_date: ""
+      },
+      detaiRequest: {
+        id_request: 0
+      },
+      responseDetail: {
+
       },
       data: [],
       totalPage: 0,
@@ -156,12 +169,22 @@ export default {
       };
       this.fetch(1);
     },
-    itemIndex(index){
-        if(this.pageActive === 1){
-            return index +1
-        } else {
-            return index +1 + 10*(this.pageActive -1)
-        }
+    itemIndex(index) {
+      if (this.pageActive === 1) {
+        return index + 1;
+      } else {
+        return index + 1 + 10 * (this.pageActive - 1);
+      }
+    },
+    detailRequest(id_request){
+      console.log(id_request)
+      this.detailRequest = {
+        id_request: id_request
+      }
+      this.$store.dispatch('user/detailRequest', this.detailRequest).then(reponse => {
+        this.responseDetail = reponse
+        console.log(this.responseDetail)
+      });
     }
   }
 };

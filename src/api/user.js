@@ -34,3 +34,10 @@ export function logout() {
         method: 'post'
     })
 }
+export function detailRequest(data){
+    return request({
+        url:'admin/request/detail',
+        method: 'post',
+        data
+    })
+}

@@ -1,4 +1,4 @@
-import {login, getList, getLogs, getRequest, logout} from '../../api/user'
+import {login, getList, getLogs, getRequest, logout, detailRequest} from '../../api/user'
 import router from '../../router'
 import { getToken, getRole, setToken, setRole, setCurrentUser, removeRole, removeToken, removeCurrentUser } from '../../utils/auth'
 
@@ -80,6 +80,17 @@ const actions = {
                 removeToken()
                 removeCurrentUser()
                 resolve()
+            }).catch( error => {
+                reject(error)
+            })
+        })
+    },
+    detailRequest({}, formData) {
+        const {id_request} = formData
+        return new Promise((resolve, reject) => {
+            detailRequest({id_request: id_request}).then(reponse => {
+                const { data }= reponse
+                resolve(data)
             }).catch( error => {
                 reject(error)
             })
