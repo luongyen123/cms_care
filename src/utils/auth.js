@@ -9,7 +9,7 @@ export function getToken() {
 }
 
 export function setToken(token) {
-    return Cookies.set(Tokenkey, token)
+    return Cookies.set(Tokenkey, token, { expires: 7 })
 }
 
 export function removeToken(){
@@ -23,7 +23,7 @@ export function getCurrentUser() {
 
 export function setCurrentUser(user) {
     user = JSON.stringify(user)
-    return Cookies.set(UserLogin,user)
+    return Cookies.set(UserLogin,user,{ expires: 7 })
 }
 
 export function removeCurrentUser() {
@@ -35,7 +35,7 @@ export function getRole(){
 }
 
 export function setRole(role) {
-    return Cookies.set(RokeKey,role)
+    return Cookies.set(RokeKey,role, { expires: 7 })
 }
 
 export function removeRole() {
