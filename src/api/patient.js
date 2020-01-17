@@ -14,3 +14,10 @@ export function detail(data){
         data
     })
 }
+export function historyRequest(data){
+    return request({
+        url: 'admin/patient/history',
+        method: 'post',
+        data
+    })
+}

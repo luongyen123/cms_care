@@ -40,9 +40,9 @@ const actions = {
         })
     },
     getList({commit}, formData) {
-        const {next_page} = formData
+        const {next_page, start_date, end_date, city_code,district_code, name} = formData
         return new Promise((resolve, reject) => {
-            getList({page: next_page}).then(reponse => {
+            getList({page: next_page, name: name}).then(reponse => {
                 const { data }= reponse
                 resolve(data)
             }).catch( error => {

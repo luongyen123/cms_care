@@ -29,6 +29,7 @@
             placeholder="Start date"
             type="date"
             v-model="formData.start_date"
+            v-on:change="fetch(1)"
           ></b-input>
           <!-- <label for="inline-form-input-end">End date</label> -->
           <b-input
@@ -36,6 +37,7 @@
             placeholder="End date"
             type="date"
             v-model="formData.end_date"
+            v-on:change="fetch(1)"
           ></b-input>
           <b-select v-model="formData.city_code" v-on:change="getDistrict">
             <option value>- Please select city --</option>
@@ -45,7 +47,7 @@
               v-bind:value="item['code']"
             >{{item['show_name']}}</option>
           </b-select>
-          <b-select v-model="formData.district_code">
+          <b-select v-model="formData.district_code" v-on:change="fetch(1)">
             <option value>- Please select district --</option>
             <option
               v-for="(item, index) in dataDistrict"
@@ -53,7 +55,19 @@
               v-bind:value="item['code']"
             >{{item['show_name']}}</option>
           </b-select>
-          <b-button variant="primary" v-on:click="fetch(1)" class="ti-search btn-lg" />
+          <b-button variant="primary" v-on:click="reset" class="btn btn-primary" style="margin-left: 5px">Reset search</b-button>
+        </div>
+        <div class="form-inline" v-if="tabActive === 3">
+          <div class="input-group mb-3">
+            <label>Filter by name</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Keyword search"
+              v-model="formData.name"
+              v-on:keyup="fetch(1)"
+            />
+          </div>
         </div>
         <div class="col-md-4 pull-right" style="margin-top:20px" v-if="totalPage >1">
           <input
@@ -129,7 +143,7 @@ const tableAccountColums = [
   "Phone",
   "Type",
   "Type Account",
-  "Birthday"
+  "Age"
 ];
 const AcountColumIndexs = [
   "user_id",
@@ -162,7 +176,8 @@ export default {
         start_date: 0,
         end_date: 0,
         city_code: "",
-        district_code: ""
+        district_code: "",
+        name: ""
       },
       locationGet: {
         key: ""
@@ -209,6 +224,7 @@ export default {
             this.dataDistrict = reponse;
           });
       }
+      this.fetch(1)
     },
     ActiveTab(tab) {
       this.tabActive = tab;
@@ -219,7 +235,7 @@ export default {
         city_code: "",
         district_code: ""
       };
-      if (this.tabActive === 1) {
+      if (tab === 1) {
         this.table1 = {
           title: "List patient app",
           subTitle: "",
@@ -227,7 +243,7 @@ export default {
           columnIndxs: [...columnIndxs]
         };
         this.name_router = "patient/home";
-      } else if (this.tabActive === 2) {
+      } else if (tab === 2) {
         this.table1 = {
           title: "List Nurse app",
           subTitle: "",
@@ -244,6 +260,16 @@ export default {
         };
         this.name_router = "user/getList";
       }
+      this.fetch(1);
+    },
+    reset() {
+      this.formData = {
+        next_page: 1,
+        start_date: 0,
+        end_date: 0,
+        city_code: "",
+        district_code: ""
+      };
       this.fetch(1);
     }
   },

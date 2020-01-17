@@ -1,4 +1,4 @@
-import {home, detail} from '../../api/patient'
+import {home, detail, historyRequest} from '../../api/patient'
 import {formatSearch} from '../../utils/dateFormat'
 
 const state = {
@@ -28,6 +28,17 @@ const actions = {
         let { id } = formData
         return new Promise((resolve, reject) => {
             detail({id: id}).then(reponse => {
+                const { data }= reponse
+                resolve(data)
+            }).catch( error => {
+                reject(error)
+            })
+        })
+    },
+    historyRequest({commit},formData) {
+        let { id, page } = formData
+        return new Promise((resolve, reject) => {
+            historyRequest({id_patient: id, page: page}).then(reponse => {
                 const { data }= reponse
                 resolve(data)
             }).catch( error => {

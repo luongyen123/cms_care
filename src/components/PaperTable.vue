@@ -11,6 +11,13 @@
           <td v-for="(columnIndx, index) in columnIndxs" :key="index">{{itemValue(item,columnIndx)}}</td>
           <td>
             <b-button v-b-modal.modal-1 v-on:click="viewProfile(item['id'])" class="btn ti-eye"></b-button>
+            <b-button
+              v-if="typeUser === 1"
+              v-b-modal.modal-2
+              v-on:click="manager(item['id'],1)"
+              class="btn btn-primary ti-list-ol"
+              style="margin-left: 5px"
+            ></b-button>
           </td>
         </slot>
       </tr>
@@ -58,12 +65,12 @@
               <b-form-input disabled v-bind:value="userData.district['show_name']"></b-form-input>
             </b-form-group>
           </div>
-          <div class="row" v-for="(location,index) in userData.location" v-bind:key="index">
+          <div class="row" v-for="(location,index1) in userData.location" v-bind:key="index1">
             <slot :row="location">
               <b-form-group
                 v-for="(columLocationIndx, index) in columLocation"
                 v-bind:key="index"
-                v-bind:label="columLocationIndx"
+                v-bind:label="columLocationIndx +' '+ (index1 +1)"
                 class="col"
               >
                 <b-form-input v-bind:value="location[columLocationIndx].show_name" disabled></b-form-input>
@@ -96,7 +103,7 @@
             <b-form-textarea disabled v-bind:value="userData.description" rows="4"></b-form-textarea>
           </b-form-group>
         </b-form>
-        <div class="row" v-if="totalPage > 1" style="margin-bottom: 10px">
+        <div class="row" v-if="typeUser === 3 && totalPage > 1" style="margin-bottom: 10px">
           <div class="col">
             <input
               v-for="(item, index) in totalPage"
@@ -112,7 +119,7 @@
           </div>
         </div>
 
-        <table class="table table-bordered">
+        <table class="table table-bordered" v-if="typeUser === 3">
           <thead clas="thead-dark">
             <tr>
               <th scope="col">Device name</th>
@@ -132,6 +139,26 @@
           </tbody>
         </table>
       </b-modal>
+      <b-modal size="xl" id="modal-2" title="Manger care">
+        <table class="table table-bordered">
+          <thead>
+            <slot name="columns">
+              <th scope="col" v-for="column in historyTable" :key="column">{{column}}</th>
+            </slot>
+          </thead>
+          <tbody>
+            <tr v-for="(item, index) in history" :key="index">
+              <td>{{index +1}}</td>
+              <slot :row="item">
+                <td
+                  v-for="(columnIndx, index) in columsHistory"
+                  :key="index"
+                >{{itemValue(item,columnIndx)}}</td>
+              </slot>
+            </tr>
+          </tbody>
+        </table>
+      </b-modal>
     </div>
   </table>
 </template>
@@ -143,6 +170,23 @@ import {
   formatTimeLog
 } from "../utils/dateFormat";
 const columLocation = ["city", "district"];
+const historyTable = [
+  "#",
+  "Nurse",
+  "Status",
+  "Start date",
+  "End date",
+  "Start timne",
+  "End Time"
+];
+const columsHistory = [
+  "nurse",
+  "status",
+  "start_date",
+  "end_date",
+  "start_time",
+  "end_time"
+];
 export default {
   name: "paper-table",
   components: {},
@@ -157,11 +201,15 @@ export default {
         location: []
       },
       logs: [],
+      history: [],
+      historyTotal: 0,
       totalPage: 0,
       titleForm: "",
       columLocation: columLocation,
       columsLog: ["device_name", "version", "created"],
-      pageActive: 1
+      pageActive: 1,
+      historyTable: [...historyTable],
+      columsHistory: [...columsHistory]
     };
   },
   props: {
@@ -194,16 +242,34 @@ export default {
     hasValue(item, column) {
       return item[column.toLowerCase()] !== "undefined";
     },
+    isEmpty(obj) {
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) return false;
+      }
+      return true;
+    },
     itemValue(item, column) {
       switch (column) {
         case "city":
+          if ("city" in item) {
+            return item[column].show_name;
+          } else {
+            return "";
+          }
         case "district":
-          return item[column].show_name;
+          if ("district" in item) {
+            return item[column].show_name;
+          } else {
+            return "";
+          }
         case "birthday":
           return Age(item[column]);
         case "start_date":
         case "end_date":
           return formatDate(item[column]);
+        case "start_time":
+        case "end_time":
+          return formatTime(item[column])
         case "created":
           return formatTimeLog(item[column]);
         case "rate":
@@ -229,6 +295,22 @@ export default {
           } else {
             return "The patient's representative";
           }
+        case "nurse":
+        case "patient":
+        case "user_login":
+          if (!this.isEmpty(item[column])) {
+            return item[column].name +" (Email: " + item[column].email + ") ";
+          } else {
+            return "_";
+          }
+        case "status":
+          if (item[column] == 1) {
+            return "Taking care of";
+          } else if (item[column] == 2) {
+            return "Pending";
+          } else {
+            return "Finish";
+          }
         default:
           return item[column];
       }
@@ -248,12 +330,12 @@ export default {
           this.titleForm = "Nurse";
         });
       } else {
-        this.formData.page = 1
+        this.formData.page = 1;
         this.$store.dispatch("user/getLogs", this.formData).then(response => {
           this.logs = response.datas;
           this.totalPage = response.total_page;
           this.pageActive = 1;
-          this.titleForm =" History login"
+          this.titleForm = " History login";
         });
       }
     },
@@ -304,13 +386,27 @@ export default {
       }
     },
     fetch(page) {
-      this.formData.page = page
+      this.formData.page = page;
       this.$store.dispatch("user/getLogs", this.formData).then(response => {
-          this.logs = response.datas;
-          this.totalPage = response.total_page;
-          this.pageActive = page;
-        })
-    }
+        this.logs = response.datas;
+        this.totalPage = response.total_page;
+        this.pageActive = page;
+      });
+    },
+    manager(id, page) {
+      this.formData = {
+        id: id,
+        page: page
+      };
+      if (this.typeUser === 1) {
+        this.$store
+          .dispatch("patient/historyRequest", this.formData)
+          .then(response => {
+            this.history = response.datas;
+            this.historyTotal = response.total_page;
+          });
+      }
+    },
   }
 };
 </script>
