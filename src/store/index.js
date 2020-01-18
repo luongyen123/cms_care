@@ -5,6 +5,7 @@ import patientModule from './modules/patient'
 import nureModule from './modules/nure'
 import locationModule from './modules/location'
 import districtModule from './modules/district'
+import adsModule from './modules/ads'
 
 Vue.use(Vuex)
 export default new Vuex.Store({
@@ -13,6 +14,7 @@ export default new Vuex.Store({
         patient: patientModule,
         nure: nureModule,
         location: locationModule,
-        district: districtModule
+        district: districtModule,
+        ads: adsModule
     }
 })

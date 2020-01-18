@@ -8,6 +8,8 @@ import UserProfile from "@/pages/UserProfile.vue";
 import Login from "@/pages/Login/Login.vue";
 import TableList from "@/pages/TableList"
 import Requested from "@/pages/Requested"
+import Ads from "@/pages/Ads"
+
 const routes = [
   {
     path: "/",
@@ -36,6 +38,12 @@ const routes = [
         path: "listRequested",
         name: "List requested manager",
         component: Requested,
+        meta: {permisions: 1}
+      },
+      {
+        path: "ads",
+        name: "Ads manager",
+        component: Ads,
         meta: {permisions: 1}
       }
     ]

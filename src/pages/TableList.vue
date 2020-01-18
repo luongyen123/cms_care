@@ -55,7 +55,7 @@
               v-bind:value="item['code']"
             >{{item['show_name']}}</option>
           </b-select>
-          <b-button variant="primary" v-on:click="reset" class="btn btn-primary" style="margin-left: 5px">Reset search</b-button>
+          <b-button variant="primary" v-on:click="reset" class="btn btn-primary" style="margin-left: 5px"><span class="ti-reload"></span> Reset search</b-button>
         </div>
         <div class="form-inline" v-if="tabActive === 3">
           <div class="input-group mb-3">

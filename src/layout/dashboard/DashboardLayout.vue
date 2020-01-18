@@ -4,8 +4,9 @@
       <template slot="links">
         <sidebar-link to="/dashboard" name="Dashboard" icon="ti-panel"/>
         <sidebar-link to="/listObject" name="List Object" icon="ti-view-list-alt"/>
-        <sidebar-link to="/listRequested" name="List Request" icon="ti-view-list-alt"/>
-        <sidebar-link to="/stats" name="User Profile" icon="ti-user"/>
+        <sidebar-link to="/listRequested" name="List Request" icon="ti-layers"/>
+        <sidebar-link to="/ads" name="Ads manager" icon="ti-bookmark-alt"/>
+        <!-- <sidebar-link to="/stats" name="User Profile" icon="ti-user"/> -->
       </template>
       <mobile-menu>
         <li class="nav-item">

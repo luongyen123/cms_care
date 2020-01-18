@@ -23,7 +23,7 @@
         <label>Filter by time end date</label>
         <input class="custom-select" type="date" v-model="formData.end_date" v-on:change="fetch(1)" />
       </div>
-      <button v-on:click="reset" class="btn btn-primary">Reset search</button>
+      <button v-on:click="reset" class="btn btn-primary"><span class="ti-reload"></span> Reset search</button>
     </div>
     <div class="col-md-9">
       <div style="margin-bottom:10px" v-if="totalPage >1">
