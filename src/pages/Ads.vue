@@ -119,7 +119,14 @@ export default {
       }
       if (this.nameValidate === "" && this.imageValidate === "") {
         this.$store.dispatch("ads/adsCreate", this.formUpload).then(reponse => {
-          console.log(reponse);
+          this.data.unshift(reponse)
+          this.formUpload = {
+            id: 0,
+            name: "",
+            image: "",
+            active: 1
+          }
+          this.url = null
         });
       }
     },
