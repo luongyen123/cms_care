@@ -20,7 +20,8 @@
       </div>
       <span v-if="imageValidate" class="error">{{imageValidate}}</span>
       <br />
-      <button class="btn btn-primary" v-on:click="addNew()">Add</button>
+      <button class="btn btn-primary" v-if="formUpload.id === 0" v-on:click="addNew()">Add</button>
+      <button class="btn btn-primary" v-else v-on:click="addNew()">Update</button>
     </div>
     <div class="col-8">
       <img v-if="url" :src="url" class="img-thumbnail" style="max-height: 250px" />
@@ -37,24 +38,35 @@
           <td>{{itemIndex(index)}}</td>
           <slot :row="item">
             <td
-              v-for="(columnIndx, index) in columIndxs"
-              :key="index"
+              v-for="(columnIndx, index1) in columIndxs"
+              :key="index1"
               :id="columnIndx+item['id']"
               :ref="columnIndx+item['id']"
             >{{itemValue(item,columnIndx)}}</td>
             <td>
-              <img v-bind:src="'http://care.spacev.monster'+ item['image']" style="width: 360px; height: 64px" />
+              <img
+                v-bind:src="'http://care.spacev.monster'+ item['image']"
+                style="width: 360px; height: 64px"
+                :ref="'image'+item['id']"
+              />
             </td>
             <td>
               <button
                 class="btn ti-pencil btn-success"
-                v-on:click="editBaner(item['id'])"
+                v-on:click="editBaner(item['id'],index)"
                 style="margin-right: 5px"
               ></button>
               <button
-                class="btn ti-layout-tab-window"
-                v-b-modal.modal-1
+                class="btn ti-trash btn-danger"
+                v-on:click="del(item['id'],index)"
+                style="margin-right: 5px"
               ></button>
+              <button
+                class="btn btn-success ti-unlock"
+                v-on:click="editBaner(item['id'],index)"
+                style="margin-right: 5px"
+              ></button>
+              <!-- <button class="btn ti-layout-tab-window" v-b-modal.modal-1></button> -->
             </td>
           </slot>
         </tr>
@@ -72,7 +84,7 @@ const columTable = [
   "Image preview",
   "Action"
 ];
-const columIndxs = ["name", "active", "user",];
+const columIndxs = ["name", "active", "user"];
 export default {
   name: "ads",
   data() {
@@ -87,6 +99,7 @@ export default {
       formList: {
         page: 1
       },
+      indexAds: 0,
       data: [],
       columTable: [...columTable],
       columIndxs: [...columIndxs],
@@ -96,7 +109,7 @@ export default {
     };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     async onFileChanged(e) {
@@ -111,6 +124,19 @@ export default {
       }
     },
     addNew() {
+      if (this.formUpload.id > 0) {
+        this.$store.dispatch("ads/edit", this.formUpload).then(reponse => {
+          this.data[this.indexAds] = reponse;
+          this.formUpload = {
+            id: 0,
+            name: "",
+            image: "",
+            active: 1
+          };
+          this.url = null;
+          this.indexAds = 0;
+        });
+      }
       if (this.formUpload.name === "") {
         this.nameValidate = " Name required";
       }
@@ -119,14 +145,15 @@ export default {
       }
       if (this.nameValidate === "" && this.imageValidate === "") {
         this.$store.dispatch("ads/adsCreate", this.formUpload).then(reponse => {
-          this.data.unshift(reponse)
+          this.data.unshift(reponse);
           this.formUpload = {
             id: 0,
             name: "",
             image: "",
             active: 1
-          }
-          this.url = null
+          };
+          this.url = null;
+          this.itemIndex = 0;
         });
       }
     },
@@ -166,11 +193,30 @@ export default {
           return item[column];
       }
     },
-    editBaner(id) {
-      this.formUpload.id =id
-      const name = 'name'+id
-      console.log(name)
-      console.log(this.$refs.name)
+    editBaner(id, index) {
+      this.formUpload.id = id;
+      this.formUpload.name = this.$refs["name" + id][0].innerText;
+      this.url = this.$refs["image" + id][0].src;
+      this.indexAds = index;
+    },
+    del(id, index) {
+      let r = confirm("Are you sure delete");
+      if (r === true) {
+        this.formUpload.id = id;
+        this.indexAds = index;
+        this.$store.dispatch("ads/del", this.formUpload).then(reponse => {
+          this.data.splice(index, 1);
+          this.formUpload = {
+            id: 0,
+            name: "",
+            image: "",
+            active: 1
+          };
+          this.url = null;
+          this.itemIndex = 0;
+          this.$router.go()
+        });
+      } 
     }
   }
 };

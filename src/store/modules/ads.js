@@ -1,4 +1,4 @@
-import {adsCreate, getList} from '../../api/ads'
+import {adsCreate, getList, edit, del} from '../../api/ads'
 
 const state = {
 }
@@ -23,6 +23,28 @@ const actions = {
         const { page } = formData
         return new Promise((resolve, reject) => {
             getList({page: page }).then(reponse => {
+                const { data }= reponse
+                resolve(data)
+            }).catch( error => {
+                reject(error)
+            })
+        })
+    },
+    edit({commit},formData) {
+        const { id, base64, active, name } = formData
+        return new Promise((resolve, reject) => {
+            edit({id: id, base64: base64, active:active, name: name }).then(reponse => {
+                const { data }= reponse
+                resolve(data)
+            }).catch( error => {
+                reject(error)
+            })
+        })
+    },
+    del({commit},formData) {
+        const { id } = formData
+        return new Promise((resolve, reject) => {
+            del({id: id}).then(reponse => {
                 const { data }= reponse
                 resolve(data)
             }).catch( error => {

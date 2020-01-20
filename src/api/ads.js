@@ -14,3 +14,17 @@ export function getList(data) {
         data
     })
 }
+export function edit(data) {
+    return request({
+        url: 'admin/banner/update',
+        method: 'post',
+        data
+    })
+}
+export function del(data) {
+    return request({
+        url: 'admin/banner/delete',
+        method: 'post',
+        data
+    })
+}
