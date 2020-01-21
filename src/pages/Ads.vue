@@ -62,7 +62,7 @@
                 style="margin-right: 5px"
               ></button>
               <button
-                class="btn btn-warning ti-unlock"
+                class="btn ti-unlock"
                 v-on:click="changeItem(item['id'],index, item['active'])"
                 style="margin-right: 5px"
                 v-bind:class="lockClass(item['active'])"
@@ -248,9 +248,9 @@ export default {
     },
     lockClass(active) {
       if (active === 1) {
-        return "ti-lock";
+        return "ti-lock btn-warning ";
       } else {
-        return "ti-unlock";
+        return "ti-unlock btn-info";
       }
     }
   }
