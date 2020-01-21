@@ -62,9 +62,10 @@
                 style="margin-right: 5px"
               ></button>
               <button
-                class="btn btn-success ti-unlock"
-                v-on:click="editBaner(item['id'],index)"
+                class="btn btn-warning ti-unlock"
+                v-on:click="changeItem(item['id'],index, item['active'])"
                 style="margin-right: 5px"
+                v-bind:class="lockClass(item['active'])"
               ></button>
               <!-- <button class="btn ti-layout-tab-window" v-b-modal.modal-1></button> -->
             </td>
@@ -85,6 +86,9 @@ const columTable = [
   "Action"
 ];
 const columIndxs = ["name", "active", "user"];
+const removeArrayItem = (arr, itemToRemove) => {
+  return arr.filter(item => item !== itemToRemove);
+};
 export default {
   name: "ads",
   data() {
@@ -120,11 +124,34 @@ export default {
         reader.readAsDataURL(file);
         reader.onload = () => {
           this.formUpload.base64 = reader.result;
+          this.imageValidate = "";
         };
       }
     },
     addNew() {
-      if (this.formUpload.id > 0) {
+      if (this.formUpload.id === 0) {
+        if (this.formUpload.name === "") {
+          this.nameValidate = " Name required";
+        }
+        if (this.formUpload.base64 === "") {
+          this.imageValidate = "Image required";
+        }
+        if (this.nameValidate === "" && this.imageValidate === "") {
+          this.$store
+            .dispatch("ads/adsCreate", this.formUpload)
+            .then(reponse => {
+              this.data.unshift(reponse);
+              this.formUpload = {
+                id: 0,
+                name: "",
+                image: "",
+                active: 1
+              };
+              this.url = null;
+              this.indexAds = 0;
+            });
+        }
+      } else {
         this.$store.dispatch("ads/edit", this.formUpload).then(reponse => {
           this.data[this.indexAds] = reponse;
           this.formUpload = {
@@ -135,25 +162,6 @@ export default {
           };
           this.url = null;
           this.indexAds = 0;
-        });
-      }
-      if (this.formUpload.name === "") {
-        this.nameValidate = " Name required";
-      }
-      if (this.formUpload.base64 === "") {
-        this.imageValidate = "Image required";
-      }
-      if (this.nameValidate === "" && this.imageValidate === "") {
-        this.$store.dispatch("ads/adsCreate", this.formUpload).then(reponse => {
-          this.data.unshift(reponse);
-          this.formUpload = {
-            id: 0,
-            name: "",
-            image: "",
-            active: 1
-          };
-          this.url = null;
-          this.itemIndex = 0;
         });
       }
     },
@@ -199,6 +207,27 @@ export default {
       this.url = this.$refs["image" + id][0].src;
       this.indexAds = index;
     },
+    changeItem(id, index, active) {
+      this.formUpload.id = id;
+      this.formUpload.name = this.$refs["name" + id][0].innerText;
+      this.indexAds = index;
+      if (active === 1) {
+        this.formUpload.active = 0;
+      } else {
+        this.formUpload.active = 1;
+      }
+      this.$store.dispatch("ads/edit", this.formUpload).then(reponse => {
+        this.data[this.indexAds] = reponse;
+        this.formUpload = {
+          id: 0,
+          name: "",
+          image: "",
+          active: 1
+        };
+        this.url = null;
+        this.indexAds = 0;
+      });
+    },
     del(id, index) {
       let r = confirm("Are you sure delete");
       if (r === true) {
@@ -213,10 +242,16 @@ export default {
             active: 1
           };
           this.url = null;
-          this.itemIndex = 0;
-          this.$router.go()
+          this.indexAds = 0;
         });
-      } 
+      }
+    },
+    lockClass(active) {
+      if (active === 1) {
+        return "ti-lock";
+      } else {
+        return "ti-unlock";
+      }
     }
   }
 };
