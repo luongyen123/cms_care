@@ -302,7 +302,7 @@ export default {
         .dispatch("user/detailRequest", this.detaiRequestForm)
         .then(reponse => {
           this.responseDetail = reponse;
-          console.log(this.responseDetail);
+          // console.log(this.responseDetail);
         });
     },
     getAge(birthday) {

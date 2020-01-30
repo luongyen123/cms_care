@@ -117,8 +117,6 @@ const columnIndxs = [
 ];
 const tableNurseColumns = [
   "Name",
-  "City",
-  "District",
   "Age",
   "Number interest",
   "Rate",
@@ -128,8 +126,6 @@ const tableNurseColumns = [
 ];
 const columnNurseIndxs = [
   "name",
-  "city",
-  "district",
   "birthday",
   "number_like",
   "rate",
