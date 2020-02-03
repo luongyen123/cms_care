@@ -341,9 +341,9 @@ export default {
     },
     viewGender(gender) {
       if (gender === 0) {
-        return "FeMale";
-      } else if (gender === 1) {
         return "Male";
+      } else if (gender === 1) {
+        return "Female";
       } else {
         return "Other";
       }
