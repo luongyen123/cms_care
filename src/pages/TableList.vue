@@ -22,8 +22,20 @@
         >List Account</b-button>
       </div>
       <card :title="table1.title" :subTitle="table1.subTitle">
+        <div class="form-inline">
+          <div class="input-group mb-3">
+            <label>Searching by name</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Keyword search"
+              v-model="formData.name"
+              v-on:keyup="fetch(1)"
+            />
+          </div>
+        </div>
         <div class="form-inline" v-if="tabActive !== 3">
-          <!-- <label for="inline-form-input-start">Start date</label> -->
+          <label for="inline-form-input-start">Start date: </label>
           <b-input
             id="inline-form-input-start"
             placeholder="Start date"
@@ -31,7 +43,7 @@
             v-model="formData.start_date"
             v-on:change="fetch(1)"
           ></b-input>
-          <!-- <label for="inline-form-input-end">End date</label> -->
+          <label for="inline-form-input-end">End date </label>
           <b-input
             id="inline-form-input-end"
             placeholder="End date"
@@ -57,18 +69,7 @@
           </b-select>
           <b-button variant="primary" v-on:click="reset" class="btn btn-primary" style="margin-left: 5px"><span class="ti-reload"></span> Reset search</b-button>
         </div>
-        <div class="form-inline" v-if="tabActive === 3">
-          <div class="input-group mb-3">
-            <label>Filter by name</label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Keyword search"
-              v-model="formData.name"
-              v-on:keyup="fetch(1)"
-            />
-          </div>
-        </div>
+        
         <div class="col-md-4 pull-right" style="margin-top:20px" v-if="totalPage >1">
           <input
             v-for="(item, index) in totalPage"
