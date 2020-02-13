@@ -9,9 +9,9 @@ const mutations = {
 const actions = {
     //user login
     adsCreate({commit},formData) {
-        const { base64, active, name } = formData
+        const { base64, active, name, link } = formData
         return new Promise((resolve, reject) => {
-            adsCreate({base64: base64, active: active,name: name }).then(reponse => {
+            adsCreate({base64: base64, active: active,name: name, link }).then(reponse => {
                 const { data }= reponse
                 resolve(data)
             }).catch( error => {
@@ -31,9 +31,9 @@ const actions = {
         })
     },
     edit({commit},formData) {
-        const { id, base64, active, name } = formData
+        const { id, base64, active, name, link } = formData
         return new Promise((resolve, reject) => {
-            edit({id: id, base64: base64, active:active, name: name }).then(reponse => {
+            edit({id: id, base64: base64, active:active, name: name, link: link }).then(reponse => {
                 const { data }= reponse
                 resolve(data)
             }).catch( error => {

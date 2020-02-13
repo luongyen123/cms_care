@@ -35,7 +35,7 @@
           </div>
         </div>
         <div class="form-inline" v-if="tabActive !== 3">
-          <label for="inline-form-input-start">Start date: </label>
+          <label for="inline-form-input-start">Start date:</label>
           <b-input
             id="inline-form-input-start"
             placeholder="Start date"
@@ -43,7 +43,7 @@
             v-model="formData.start_date"
             v-on:change="fetch(1)"
           ></b-input>
-          <label for="inline-form-input-end">End date </label>
+          <label for="inline-form-input-end">End date</label>
           <b-input
             id="inline-form-input-end"
             placeholder="End date"
@@ -67,21 +67,31 @@
               v-bind:value="item['code']"
             >{{item['show_name']}}</option>
           </b-select>
-          <b-button variant="primary" v-on:click="reset" class="btn btn-primary" style="margin-left: 5px"><span class="ti-reload"></span> Reset search</b-button>
+          <b-button
+            variant="primary"
+            v-on:click="reset"
+            class="btn btn-primary"
+            style="margin-left: 5px"
+          >
+            <span class="ti-reload"></span> Reset search
+          </b-button>
         </div>
-        
+
         <div class="col-md-4 pull-right" style="margin-top:20px" v-if="totalPage >1">
-          <input
-            v-for="(item, index) in totalPage"
-            v-bind:key="index"
-            v-on:click="fetch(item)"
-            v-bind:value="item"
-            name="page"
-            type="button"
-            class="btn btn-sm btn-primary active"
-            v-bind:disabled="item === pageActive"
-            style="margin-right: 5px"
-          />
+          <paginate
+            v-model="pageActive"
+            :page-count="totalPage"
+            :click-handler="fetch"
+            :prev-text="'Prev'"
+            :next-text="'Next'"
+            :container-class="'pagination'"
+            :page-class="'page-item'"
+            :page-link-class="'page-link'"
+            :prev-class="'page-item'"
+            :prev-link-class="'page-link'"
+            :next-class="'page-item'"
+            :next-link-class="'page-link'"
+          ></paginate>
         </div>
         <div slot="raw-content" class="table-responsive">
           <paper-table
@@ -96,6 +106,7 @@
   </div>
 </template>
 <script>
+import Paginate from "vuejs-paginate";
 import { PaperTable } from "@/components";
 const tableColumns = [
   "Name",
@@ -153,7 +164,8 @@ const AcountColumIndexs = [
 ];
 export default {
   components: {
-    PaperTable
+    PaperTable,
+    Paginate
   },
   data() {
     return {
@@ -188,18 +200,15 @@ export default {
     };
   },
   created() {
-    this.fetch(1);
+    this.fetch();
     this.fetch_locaion();
   },
   methods: {
-    async fetch(page) {
-      if (page) {
-        this.formData.next_page = page;
-      }
+    async fetch() {
+      this.formData.next_page = this.pageActive; 
       this.$store.dispatch(this.name_router, this.formData).then(reponse => {
         this.data = reponse.datas;
         this.totalPage = reponse.total_page;
-        this.pageActive = page === 1 ? 1 : page;
       });
     },
     async fetch_locaion() {
@@ -221,7 +230,7 @@ export default {
             this.dataDistrict = reponse;
           });
       }
-      this.fetch(1)
+      this.fetch(1);
     },
     ActiveTab(tab) {
       this.tabActive = tab;

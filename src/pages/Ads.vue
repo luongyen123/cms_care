@@ -13,6 +13,16 @@
       />
       <span v-if="nameValidate" class="error">{{nameValidate}}</span>
       <br />
+      <label>Link ads</label>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Name ads"
+        style="border: 1px solid #ced4da;background-color: white;"
+        v-model="formUpload.link"
+      />
+      <span v-if="linkValidate" class="error">{{linkValidate}}</span>
+      <br />
       <label>Choose Image</label>
       <div class="custom-file" style="margin-bottom: 10px">
         <input type="file" class="custom-file-input" id="inputGroupFile04" @change="onFileChanged" />
@@ -26,7 +36,25 @@
     <div class="col-8">
       <img v-if="url" :src="url" class="img-thumbnail" style="max-height: 250px" />
     </div>
-    <h4>List ads</h4>
+    <div class="col-8">
+      <h4>List ads</h4>
+    </div>
+    <div class="col-md-4 pull-right" style="margin-top:20px" v-if="totalPage >1">
+      <paginate
+        v-model="pageActive"
+        :page-count="totalPage"
+        :click-handler="getList"
+        :prev-text="'Prev'"
+        :next-text="'Next'"
+        :container-class="'pagination'"
+        :page-class="'page-item'"
+        :page-link-class="'page-link'"
+        :prev-class="'page-item'"
+        :prev-link-class="'page-link'"
+        :next-class="'page-item'"
+        :next-link-class="'page-link'"
+      ></paginate>
+    </div>
     <table class="table col-12">
       <thead class="thead-dark">
         <tr>
@@ -49,6 +77,9 @@
                 style="width: 360px; height: 64px"
                 :ref="'image'+item['id']"
               />
+            </td>
+            <td>
+              <a :href="item.link" target="_blank">{{item.link}}</a>
             </td>
             <td>
               <button
@@ -77,12 +108,14 @@
 </template>
 
 <script>
+import Paginate from "vuejs-paginate";
 const columTable = [
   "#",
   "Name",
   "Status",
   "User create",
   "Image preview",
+  "Link redirect",
   "Action"
 ];
 const columIndxs = ["name", "active", "user"];
@@ -91,6 +124,9 @@ const removeArrayItem = (arr, itemToRemove) => {
 };
 export default {
   name: "ads",
+  components: {
+    Paginate
+  },
   data() {
     return {
       url: null,
@@ -98,7 +134,8 @@ export default {
         id: 0,
         base64: "",
         name: "",
-        active: 1
+        active: 1,
+        link: ""
       },
       formList: {
         page: 1
@@ -109,7 +146,9 @@ export default {
       columIndxs: [...columIndxs],
       nameValidate: "",
       imageValidate: "",
-      pageActive: 1
+      linkValidate: "",
+      pageActive: 1,
+      totalPage: 1
     };
   },
   created() {
@@ -129,14 +168,26 @@ export default {
       }
     },
     addNew() {
-      if (this.formUpload.id === 0) {
-        if (this.formUpload.name === "") {
-          this.nameValidate = " Name required";
+      this.imageValidate = "";
+      this.nameValidate = "";
+      this.linkValidate = "";
+      if (this.formUpload.name === "") {
+        this.nameValidate = " Name required";
+      }
+      if (this.formUpload.link !== "") {
+        if (!this.validURL(this.formUpload.link)) {
+          this.linkValidate = "Non-link format";
         }
+      }
+      if (this.formUpload.id === 0) {
         if (this.formUpload.base64 === "") {
           this.imageValidate = "Image required";
         }
-        if (this.nameValidate === "" && this.imageValidate === "") {
+        if (
+          this.nameValidate === "" &&
+          this.imageValidate === "" &&
+          this.linkValidate === ""
+        ) {
           this.$store
             .dispatch("ads/adsCreate", this.formUpload)
             .then(reponse => {
@@ -152,20 +203,27 @@ export default {
             });
         }
       } else {
-        this.$store.dispatch("ads/edit", this.formUpload).then(reponse => {
-          this.data[this.indexAds] = reponse;
-          this.formUpload = {
-            id: 0,
-            name: "",
-            image: "",
-            active: 1
-          };
-          this.url = null;
-          this.indexAds = 0;
-        });
+        if (
+          this.nameValidate === "" &&
+          this.imageValidate === "" &&
+          this.linkValidate === ""
+        ) {
+          this.$store.dispatch("ads/edit", this.formUpload).then(reponse => {
+            this.data[this.indexAds] = reponse;
+            this.formUpload = {
+              id: 0,
+              name: "",
+              image: "",
+              active: 1
+            };
+            this.url = null;
+            this.indexAds = 0;
+          });
+        }
       }
     },
     async getList() {
+      this.formList.page = this.pageActive;
       this.$store.dispatch("ads/getList", this.formList).then(reponse => {
         this.data = reponse.datas;
       });
@@ -203,7 +261,8 @@ export default {
     },
     editBaner(id, index) {
       this.formUpload.id = id;
-      this.formUpload.name = this.$refs["name" + id][0].innerText;
+      this.formUpload = this.data[index];
+      // this.formUpload.name = this.$refs["name" + id][0].innerText;
       this.url = this.$refs["image" + id][0].src;
       this.indexAds = index;
     },
@@ -252,6 +311,18 @@ export default {
       } else {
         return "ti-unlock btn-info";
       }
+    },
+    validURL(str) {
+      var pattern = new RegExp(
+        "^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+          "(\\#[-a-z\\d_]*)?$",
+        "i"
+      ); // fragment locator
+      return !!pattern.test(str);
     }
   }
 };

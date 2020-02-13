@@ -23,21 +23,26 @@
         <label>Filter by time end date</label>
         <input class="custom-select" type="date" v-model="formData.end_date" v-on:change="fetch(1)" />
       </div>
-      <button v-on:click="reset" class="btn btn-primary"><span class="ti-reload"></span> Reset search</button>
+      <button v-on:click="reset" class="btn btn-primary">
+        <span class="ti-reload"></span> Reset search
+      </button>
     </div>
     <div class="col-md-9">
       <div style="margin-bottom:10px" v-if="totalPage >1">
-        <input
-          v-for="(item, index) in totalPage"
-          v-bind:key="index"
-          v-on:click="fetch(item)"
-          v-bind:value="item"
-          name="page"
-          type="button"
-          class="btn btn-sm btn-primary active"
-          v-bind:disabled="item === pageActive"
-          style="margin-right: 5px"
-        />
+        <paginate
+          v-model="pageActive"
+          :page-count="totalPage"
+          :click-handler="fetch"
+          :prev-text="'Prev'"
+          :next-text="'Next'"
+          :container-class="'pagination'"
+          :page-class="'page-item'"
+          :page-link-class="'page-link'"
+          :prev-class="'page-item'"
+          :prev-link-class="'page-link'"
+          :next-class="'page-item'"
+          :next-link-class="'page-link'"
+        ></paginate>
       </div>
       <table class="table">
         <thead class="thead-dark">
@@ -171,7 +176,13 @@
           </div>
           <div class="form-group col-md-6">
             <label>Rate {{responseDetail.rate +'/5'}}</label>
-            <i class="fa fa-star" aria-hidden="true" v-for="(item, index) in 5" v-bind:key="index" v-bind:class="{ active: star(item,responseDetail.rate ) }"></i>
+            <i
+              class="fa fa-star"
+              aria-hidden="true"
+              v-for="(item, index) in 5"
+              v-bind:key="index"
+              v-bind:class="{ active: star(item,responseDetail.rate ) }"
+            ></i>
           </div>
         </div>
       </b-modal>
@@ -185,6 +196,7 @@ import {
   formatDate,
   formatTime
 } from "../utils/dateFormat";
+import Paginate from "vuejs-paginate";
 const columns = [
   "#",
   "Nurse",
@@ -205,6 +217,9 @@ const columsIndxs = [
 ];
 export default {
   name: "requested",
+  components: {
+    Paginate
+  },
   data() {
     return {
       columns: [...columns],
@@ -226,17 +241,14 @@ export default {
     };
   },
   created() {
-    this.fetch(this.formData.page);
+    this.fetch();
   },
   methods: {
-    async fetch(page) {
-      if (page) {
-        this.formData.page = page;
-      }
+    async fetch() {
+      this.formData.page = this.pageActive;
       this.$store.dispatch(this.name_router, this.formData).then(reponse => {
         this.data = reponse.datas;
         this.totalPage = reponse.total_page;
-        this.pageActive = page === 1 ? 1 : page;
       });
     },
     isEmpty(obj) {
@@ -312,10 +324,10 @@ export default {
       return formatDate(date);
     },
     star(item, rate) {
-      if(item <= rate) {
-        return true
+      if (item <= rate) {
+        return true;
       } else {
-        return false
+        return false;
       }
     }
   }
