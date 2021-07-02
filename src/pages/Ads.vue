@@ -73,7 +73,7 @@
             >{{itemValue(item,columnIndx)}}</td>
             <td>
               <img
-                v-bind:src="'http://care.spacev.monster'+ item['image']"
+                v-bind:src="'http://vcam.kr:9091'+ item['image']"
                 style="width: 360px; height: 64px"
                 :ref="'image'+item['id']"
               />
@@ -250,7 +250,7 @@ export default {
             return "_";
           }
         case "active":
-          if (item[column] == 1) {
+          if (parseInt(item[column]) === 1) {
             return "Use";
           } else {
             return "Not use";

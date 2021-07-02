@@ -4,7 +4,7 @@ import store from '../store'
 import { getToken } from '../utils/auth'
 
 const service = axios.create({
-    baseURL: 'http://care.spacev.monster/api',
+    baseURL: 'http://vcam.kr:9091/api',
     timeout: 5000
 })
 
@@ -18,7 +18,7 @@ service.interceptors.request.use(
     error => {
         console.log(error)
         return Promise.reject(error)
-    }  
+    }
 )
 service.interceptors.response.use(
     reponse => {

@@ -24,7 +24,7 @@
     </tbody>
     <div>
       <b-modal v-bind:size="getSize()" id="modal-1" v-bind:title="'Profile ' + titleForm" class>
-        <b-form v-if="typeUser != 3">
+        <b-form v-if="typeUser !== 3">
           <p style="font-size:20px; font-weight:bold">Personal information</p>
           <div class="row">
             <div class="col">
@@ -32,7 +32,7 @@
                 v-if="userData.avatar"
                 rounded="circle"
                 alt="Circle image"
-                v-bind:src="'http://care.spacev.monster'+userData.avatar"
+                v-bind:src="'http://vcam.kr:9091'+userData.avatar"
                 style="width: 80%;"
               ></b-img>
             </div>
